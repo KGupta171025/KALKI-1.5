@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: KALKI AI — Intelligence Operating System (IOS) API
+  description: High-performance enterprise API specification for KALKI AI, covering Chat, Agent Orchestration, MCP Tool Binding, RAG Ingestion, Hierarchical Memory, and Defensive Cybersecurity Audits.
+  version: 1.5.0
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local Development Gateway
+  - url: https://kalki.ai/api/v1
+    description: Production Enterprise Cluster
+
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate User and Issue JWT Token
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid credentials
+
+  /chat/completions:
+    post:
+      summary: Execute Multimodal Chat Query through MoE and Multi-Agent Pipeline
+      operationId: createChatCompletion
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatCompletionRequest'
+      responses:
+        '200':
+          description: Agent response with grounded citations and execution trace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatCompletionResponse'
+
+  /agents/tasks:
+    post:
+      summary: Dispatch Complex Autonomous Workflow to Agent Orchestrator
+      operationId: dispatchAgentTask
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentTaskRequest'
+      responses:
+        '202':
+          description: Task accepted and queued for execution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentTaskStatus'
+
+  /rag/documents/upload:
+    post:
+      summary: Upload and Index Document for Hybrid Vector + Keyword RAG Search
+      operationId: uploadDocument
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                privacy_level:
+                  type: string
+                  enum: [private, organization, public]
+      responses:
+        '201':
+          description: Document indexed successfully
+
+  /rag/search:
+    post:
+      summary: Query Knowledge Base using Reciprocal Rank Fusion Hybrid Search
+      operationId: hybridSearch
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                top_k:
+                  type: integer
+                  default: 5
+      responses:
+        '200':
+          description: Retrieved grounded document chunks
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+          example: 86400
+
+    ChatCompletionRequest:
+      type: object
+      required: [messages]
+      properties:
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [system, user, assistant, tool]
+              content:
+                type: string
+        use_rag:
+          type: boolean
+          default: true
+        enable_agents:
+          type: boolean
+          default: true
+
+    ChatCompletionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        response:
+          type: string
+        citations:
+          type: array
+          items:
+            type: object
+            properties:
+              document_id:
+                type: string
+              chunk_text:
+                type: string
+              score:
+                type: number
+        agent_execution_trace:
+          type: array
+          items:
+            type: object
+            properties:
+              agent_name:
+                type: string
+              action:
+                type: string
+              latency_ms:
+                type: number
+
+    AgentTaskRequest:
+      type: object
+      required: [goal]
+      properties:
+        goal:
+          type: string
+        max_budget_seconds:
+          type: integer
+          default: 300
+
+    AgentTaskStatus:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        progress_percentage:
+          type: number

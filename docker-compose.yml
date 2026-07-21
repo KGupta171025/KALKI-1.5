@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # KALKI AI Core Gateway API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kalki-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_SERVER=postgres
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+    networks:
+      - kalki-network
+
+  # KALKI AI Web Studio Dashboard
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kalki-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      - backend
+    networks:
+      - kalki-network
+
+  # PostgreSQL Relational Database (Hierarchical Memory & Users)
+  postgres:
+    image: postgres:16-alpine
+    container_name: kalki-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: kalki_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kalki-network
+
+  # Redis Cache & A2A Message Pub/Sub Bus
+  redis:
+    image: redis:7-alpine
+    container_name: kalki-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - kalki-network
+
+  # Qdrant Vector Database (Hybrid RAG Vector Store)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: kalki-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - kalki-network
+
+networks:
+  kalki-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  qdrant_storage:
