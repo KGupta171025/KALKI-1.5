@@ -4,6 +4,12 @@
   <b>Next-Generation Enterprise Intelligence Operating System (IOS)</b>
 </p>
 
+<p align="center">
+  <a href="https://KGupta171025.github.io/KALKI-1.5/">
+    <img src="https://img.shields.io/badge/Live_Preview-GitHub_Pages-00F0FF?style=for-the-badge&logo=github" alt="Live Preview on GitHub Pages" />
+  </a>
+</p>
+
 ---
 
 ## 🌟 Executive Summary
