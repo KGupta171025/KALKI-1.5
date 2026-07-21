@@ -53,7 +53,7 @@ echo [SUCCESS] Configuration completed! Launching KALKI AI services...
 echo =====================================================================
 echo.
 echo [*] Starting FastAPI Backend on http://localhost:8000
-start cmd /k "title KALKI Backend Server && cd backend && python app/main.py"
+start cmd /k "title KALKI Backend Server && cd backend && set PYTHONPATH=. && python -m app.main"
 
 echo [*] Starting Next.js Frontend on http://localhost:3000
 start cmd /k "title KALKI Frontend Web App && cd frontend && npm run dev"
