@@ -17,10 +17,10 @@
 ```
 +-----------------------------------------------------------------------+
 |  LAYER 1: USER INTERFACE LAYER                                        |
-|  Web (Next.js) | Mobile (Flutter) | Desktop (Tauri) | Smartwatch | API  |
+|  Web (Next.js) | Mobile (Flutter) | Desktop (Tauri) | Smartwatch | API|
 +-----------------------------------------------------------------------+
 |  LAYER 6: SECURITY & GOVERNANCE LAYER (Perimeter & In-Line Audit)     |
-|  OAuth2 / MFA | RBAC Control | AES-256 E2EE | AI Safety & Defense    |
+|  OAuth2 / MFA | RBAC Control | AES-256 E2EE | AI Safety & Defense     |
 +-----------------------------------------------------------------------+
 |  LAYER 2: MULTIMODAL PERCEPTION LAYER                                 |
 |  Text & PDF Parsing | OCR & Scene VLM | Whisper Audio | Sensor Stream |
@@ -30,13 +30,13 @@
 |  Standard Protocols: MCP (Model Context Protocol) & A2A Inter-Agent   |
 +-----------------------------------------------------------------------+
 |  LAYER 3: REASONING & MODEL LAYER                                     |
-|  MoE Task Router | LLM Cluster | Edge SLMs (INT4) | LCM Conversational |
+|  MoE Task Router | LLM Cluster | Edge SLMs (INT4) | LCM Conversational|
 +-----------------------------------------------------------------------+
 |  LAYER 5: KNOWLEDGE & RAG LAYER                                       |
-|  Dense Vector + BM25 Sparse | Cross-Encoder Re-Ranker | Neo4j KG    |
+|  Dense Vector + BM25 Sparse | Cross-Encoder Re-Ranker | Neo4j KG      |
 +-----------------------------------------------------------------------+
 |  LAYER 7: INFRASTRUCTURE LAYER                                        |
-|  Kubernetes (EKS/GKE) | Docker Compose | Edge Runtime | Prometheus     |
+|  Kubernetes (EKS/GKE) | Docker Compose | Edge Runtime | Prometheus    |
 +-----------------------------------------------------------------------+
 ```
 
