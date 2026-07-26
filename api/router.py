@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Form
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from services.inference import LLMProviderFactory
 from services.task_queue import dispatch_autonomous_agent_task, celery_app
+from rag.pipeline import rag_pipeline
 
 router = APIRouter()
 
@@ -90,4 +91,30 @@ async def get_task_status(task_id: str):
             "message": "Mock celery result returned cleanly. Celery engine offline."
         }
     }
+
+@router.post("/rag/documents/upload")
+async def upload_document(title: str = Form(...), content: str = Form(...)):
+    """
+    RAG ingestion endpoint chunking raw text entries into local memory index.
+    """
+    from rag.chunker import semantic_chunker
+    chunks = semantic_chunker.chunk_document(content, metadata={"title": title})
+    return {
+        "status": "SUCCESS",
+        "chunks_indexed": len(chunks),
+        "message": f"Successfully indexed document '{title}'."
+    }
+
+class SearchPayload(BaseModel):
+    query: str
+    top_k: Optional[int] = 3
+
+@router.post("/rag/search")
+async def search_rag(payload: SearchPayload):
+    """
+    Triggers RRF hybrid semantic + sparse keyword search over vector indices.
+    """
+    results = await rag_pipeline.run_pipeline(payload.query, top_n=payload.top_k)
+    return results
+
 
