@@ -9,6 +9,8 @@ chat_payload = {
     "messages": [
         {"role": "user", "content": "Analyze KALKI agent protocols and security compliance."}
     ],
+    "provider": "mock",
+    "model": "kalki-mock-model",
     "use_rag": True,
     "enable_agents": True
 }
