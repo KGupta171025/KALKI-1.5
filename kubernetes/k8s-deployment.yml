@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kalki-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kalki-config
+  namespace: kalki-system
+data:
+  DATABASE_URL: "postgresql+asyncpg://postgres:postgrespassword@postgres-svc:5432/kalki_db"
+  CELERY_BROKER_URL: "amqp://guest:guest@rabbitmq-svc:5672//"
+  CELERY_RESULT_BACKEND: "redis://redis-svc:6379/0"
+  MONGODB_URL: "mongodb://mongodb-svc:27017/kalki_db"
+  NEO4J_URI: "bolt://neo4j-svc:7687"
+  QDRANT_HOST: "qdrant-svc"
+  QDRANT_PORT: "6333"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kalki-backend
+  namespace: kalki-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kalki-backend
+  template:
+    metadata:
+      labels:
+        app: kalki-backend
+    spec:
+      containers:
+      - name: backend
+        image: kgupta171025/kalki-backend:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: kalki-config
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 250m
+            memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kalki-backend-svc
+  namespace: kalki-system
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: kalki-backend
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kalki-frontend
+  namespace: kalki-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kalki-frontend
+  template:
+    metadata:
+      labels:
+        app: kalki-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: kgupta171025/kalki-frontend:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kalki-frontend-svc
+  namespace: kalki-system
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: kalki-frontend
+  type: LoadBalancer
