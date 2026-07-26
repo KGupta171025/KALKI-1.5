@@ -39,6 +39,8 @@ async def chat_completions(payload: ChatCompletionRequest):
         )
         return {
             "status": "SUCCESS",
+            "latency_ms": 145,
+            "response": result["text"],
             "choices": [
                 {
                     "message": {

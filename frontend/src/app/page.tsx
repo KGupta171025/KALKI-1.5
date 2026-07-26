@@ -6,11 +6,12 @@ import {
   Upload, Search, CheckCircle2, AlertTriangle, Activity, Zap, 
   Layers, Lock, Server, Sparkles, FileText, Send, RefreshCw,
   Sliders, Play, Eye, Settings, Share2, Volume2, Mic, Clock,
-  Grid, BarChart2, Plus, ArrowRight, Trash2, Check, ExternalLink
+  Grid, BarChart2, Plus, ArrowRight, Trash2, Check, ExternalLink, Menu, X
 } from 'lucide-react';
 
 export default function KalkiDashboard() {
   const [activeTab, setActiveTab] = useState<'agent' | 'builder' | 'memory' | 'rag' | 'marketplace' | 'analytics' | 'security'>('agent');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Chat / Agent State
   const [inputQuery, setInputQuery] = useState('');
@@ -136,27 +137,27 @@ Query processed successfully: **"${inputQuery}"**
     <div className="min-h-screen bg-[#07090E] text-gray-100 flex flex-col font-sans">
       
       {/* 1. MASTER HEADER */}
-      <header className="border-b border-white/10 bg-[#0B0F19]/80 backdrop-blur-md px-6 py-4 sticky top-0 z-50 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 p-[2px] flex items-center justify-center shadow-lg shadow-cyan-500/20">
+      <header className="border-b border-white/10 bg-[#0B0F19]/80 backdrop-blur-md px-4 sm:px-6 py-4 sticky top-0 z-50 flex items-center justify-between">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 p-[2px] flex items-center justify-center shadow-lg shadow-cyan-500/20">
             <div className="w-full h-full bg-[#07090E] rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 animate-pulse" />
             </div>
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+              <h1 className="text-lg sm:text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
                 KALKI
               </h1>
-              <span className="px-2 py-0.5 text-[10px] font-mono font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded-full">
+              <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded-full">
                 IOS v2.0.0
               </span>
             </div>
-            <p className="text-xs text-gray-400">Krishna Autonomous Learning &amp; Knowledge Intelligence</p>
+            <p className="text-[10px] sm:text-xs text-gray-400 truncate max-w-[200px] sm:max-w-none">Krishna Autonomous Learning &amp; Knowledge Intelligence</p>
           </div>
         </div>
 
-        {/* Live System Metrics */}
+        {/* Live System Metrics (Desktop) */}
         <div className="hidden lg:flex items-center space-x-6 text-xs font-mono">
           <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
             <Zap className="w-4 h-4 text-cyan-400" />
@@ -176,13 +177,22 @@ Query processed successfully: **"${inputQuery}"**
             <span className="text-emerald-400 font-bold uppercase">{wsStatus}</span>
           </div>
         </div>
+
+        {/* Mobile Hamburger Menu Toggle Button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white"
+          aria-label="Toggle mobile menu"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </header>
 
-      {/* 2. NAVIGATION BAR */}
-      <div className="border-b border-white/10 bg-[#0B0F19]/50 px-6 py-2 flex space-x-2 overflow-x-auto scrollbar-thin">
+      {/* 2. NAVIGATION BAR (Desktop Touch & Mobile Dropdown) */}
+      <div className={`border-b border-white/10 bg-[#0B0F19]/50 px-4 sm:px-6 py-2 ${isMobileMenuOpen ? 'flex flex-col space-y-2' : 'hidden lg:flex lg:space-x-2 overflow-x-auto no-scrollbar'}`}>
         <button
-          onClick={() => setActiveTab('agent')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('agent'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'agent'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
@@ -193,8 +203,8 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => setActiveTab('builder')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('builder'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'builder'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
@@ -205,8 +215,8 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => setActiveTab('memory')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('memory'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'memory'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
@@ -217,8 +227,8 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => setActiveTab('rag')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('rag'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'rag'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
@@ -229,8 +239,8 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => setActiveTab('marketplace')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('marketplace'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'marketplace'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
@@ -241,8 +251,8 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => setActiveTab('analytics')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'analytics'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
@@ -253,8 +263,8 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => setActiveTab('security')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all shrink-0 ${
+          onClick={() => { setActiveTab('security'); setIsMobileMenuOpen(false); }}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'security'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
               : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'

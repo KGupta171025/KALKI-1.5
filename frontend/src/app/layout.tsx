@@ -1,9 +1,16 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
   title: 'KALKI AI — Master Intelligence Operating System',
   description: 'Unified enterprise AI platform combining LLMs, VLMs, autonomous multi-agent orchestration, hybrid RAG, and defensive cybersecurity.',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#07090E',
 };
 
 export default function RootLayout({
