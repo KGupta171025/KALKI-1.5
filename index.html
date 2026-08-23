@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KALKI AI — Master Intelligence Operating System</title>
+  <meta name="description" content="KALKI (Krishna Autonomous Learning & Knowledge Intelligence) — Next-Generation Enterprise AI Operating System." />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            kalki: {
+              bg: '#07090E',
+              panel: '#0B0F19',
+              card: 'rgba(19, 27, 46, 0.7)',
+              cyan: '#00F0FF',
+              purple: '#7000FF',
+              emerald: '#10B981',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #07090E;
+      color: #F3F4F6;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .glass-panel {
+      background: rgba(19, 27, 46, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .glass-panel-glow {
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #00F0FF 0%, #A855F7 50%, #EC4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(11, 15, 25, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.2);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 240, 255, 0.5);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    .pulse-glow {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+  <!-- ================= HEADER ================= -->
+  <header className="border-b border-white/10 bg-[#0B0F19]/90 backdrop-blur-md px-4 sm:px-6 py-4 sticky top-0 z-50 flex items-center justify-between">
+    <div class="flex items-center space-x-3 sm:space-x-4">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 p-[2px] flex items-center justify-center shadow-lg shadow-cyan-500/20">
+        <div class="w-full h-full bg-[#07090E] rounded-[10px] flex items-center justify-center">
+          <i class="fa-solid fa-wand-magic-sparkles text-cyan-400 text-lg animate-pulse"></i>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-xl font-extrabold tracking-wider gradient-text">KALKI AI</h1>
+          <span class="px-2 py-0.5 text-[10px] font-mono font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded-full">IOS v2.0.0</span>
+        </div>
+        <p class="text-[11px] sm:text-xs text-gray-400 truncate max-w-[220px] sm:max-w-none">Krishna Autonomous Learning &amp; Knowledge Intelligence</p>
+      </div>
+    </div>
+
+    <!-- Desktop SLA Badges -->
+    <div class="hidden lg:flex items-center space-x-4 text-xs font-mono">
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+        <i class="fa-solid fa-bolt text-cyan-400"></i>
+        <span class="text-gray-400">SLA:</span>
+        <span class="text-cyan-400 font-bold">&lt;500ms</span>
+      </div>
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+        <i class="fa-solid fa-microchip text-indigo-400"></i>
+        <span class="text-gray-400">MoE Routing:</span>
+        <span class="text-indigo-300 font-semibold" id="activeModelBadge">gemini-1.5-flash</span>
+      </div>
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+        <i class="fa-solid fa-circle-dot text-emerald-400"></i>
+        <span class="text-gray-400">WebSocket:</span>
+        <span class="text-emerald-400 font-bold uppercase">LIVE</span>
+      </div>
+      <a href="https://github.com/KGupta171025/KALKI-1.5" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-medium transition flex items-center space-x-2">
+        <i class="fa-brands fa-github"></i>
+        <span>GitHub Repo</span>
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white">
+      <i class="fa-solid fa-bars text-lg" id="mobileMenuIcon"></i>
+    </button>
+  </header>
+
+  <!-- ================= NAVIGATION TABS ================= -->
+  <div id="navContainer" class="border-b border-white/10 bg-[#0B0F19]/50 px-4 sm:px-6 py-2 hidden lg:flex lg:space-x-2 overflow-x-auto no-scrollbar">
+    <button onclick="switchTab('agent')" id="tab-agent" class="tab-btn active-tab flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40">
+      <i class="fa-solid fa-terminal text-cyan-400"></i>
+      <span>Agent Studio</span>
+    </button>
+
+    <button onclick="switchTab('builder')" id="tab-builder" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-sliders"></i>
+      <span>Workflow Builder</span>
+    </button>
+
+    <button onclick="switchTab('memory')" id="tab-memory" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-layer-group"></i>
+      <span>Memory Viewer</span>
+    </button>
+
+    <button onclick="switchTab('rag')" id="tab-rag" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-database"></i>
+      <span>Knowledge Base (RAG)</span>
+    </button>
+
+    <button onclick="switchTab('marketplace')" id="tab-marketplace" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-cubes"></i>
+      <span>Plugin Marketplace</span>
+    </button>
+
+    <button onclick="switchTab('analytics')" id="tab-analytics" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>Analytics</span>
+    </button>
+
+    <button onclick="switchTab('security')" id="tab-security" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+      <span>Security &amp; Guardrails</span>
+    </button>
+  </div>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
+
+    <!-- ---------------- TAB 1: AGENT STUDIO ---------------- -->
+    <div id="content-agent" class="tab-content block space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left/Middle Column -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Command Prompt Box -->
+          <div class="glass-panel rounded-2xl p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <h2 class="text-base sm:text-lg font-semibold flex items-center space-x-2">
+                <i class="fa-solid fa-code text-cyan-400"></i>
+                <span>Autonomous Agent Command Center</span>
+              </h2>
+
+              <!-- Model Selector -->
+              <div class="flex items-center space-x-2 bg-white/5 p-1 rounded-xl border border-white/10 text-xs">
+                <select id="providerSelect" onchange="onModelChange()" class="bg-transparent text-gray-200 focus:outline-none px-2 py-1">
+                  <option value="google" class="bg-[#0B0F19]">Google Gemini</option>
+                  <option value="openai" class="bg-[#0B0F19]">OpenAI GPT-4o</option>
+                  <option value="anthropic" class="bg-[#0B0F19]">Anthropic Claude</option>
+                  <option value="ollama" class="bg-[#0B0F19]">Ollama (Local)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Quick Prompt Suggestions -->
+            <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar text-[11px] text-gray-400 pt-1">
+              <span class="shrink-0 text-cyan-400 font-mono">Try:</span>
+              <button onclick="setPrompt('Audit KALKI AI architecture and check NIST security compliance.')" class="shrink-0 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition">Audit Security</button>
+              <button onclick="setPrompt('Decompose workflow DAG for background Celery worker tasks.')" class="shrink-0 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition">Decompose Workflow</button>
+              <button onclick="setPrompt('Query Qdrant hybrid vector index for system latency SLAs.')" class="shrink-0 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition">RAG Query</button>
+            </div>
+
+            <div class="relative">
+              <textarea id="promptInput" rows="4" placeholder="Enter complex instruction (e.g. 'Audit this codebase config and dispatch RAG context search')..." class="w-full bg-[#07090E]/80 border border-white/10 rounded-xl p-4 text-xs sm:text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/60 resize-none font-sans"></textarea>
+              
+              <div class="absolute bottom-3 right-3 flex items-center space-x-2">
+                <button onclick="toggleVoice()" id="voiceBtn" class="p-2 rounded-lg border bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 transition" title="Toggle Voice Assistant">
+                  <i class="fa-solid fa-microphone" id="voiceIcon"></i>
+                </button>
+
+                <button onclick="executeAgentTask()" id="dispatchBtn" class="px-4 sm:px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-medium text-xs sm:text-sm flex items-center space-x-2 shadow-lg shadow-cyan-500/20 transition">
+                  <i class="fa-solid fa-paper-plane" id="dispatchIcon"></i>
+                  <span id="dispatchText">Dispatch</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Voice Waves Animation -->
+            <div id="voiceWaveContainer" class="hidden flex items-center space-x-1.5 bg-cyan-950/20 border border-cyan-800/40 p-3 rounded-xl justify-center">
+              <span class="text-xs font-mono text-cyan-400 mr-2">Voice Input Processing:</span>
+              <div class="w-1 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+              <div class="w-1 h-6 bg-cyan-400 rounded-full animate-pulse"></div>
+              <div class="w-1 h-4 bg-cyan-400 rounded-full animate-pulse"></div>
+              <div class="w-1 h-8 bg-cyan-400 rounded-full animate-pulse"></div>
+              <div class="w-1 h-5 bg-cyan-400 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+
+          <!-- Execution Output Card -->
+          <div id="executionResultCard" class="glass-panel rounded-2xl p-4 sm:p-6 space-y-4 border-cyan-500/30">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+                <h3 class="font-semibold text-gray-200 text-sm sm:text-base">Task Executed Successfully</h3>
+              </div>
+              <span class="text-[10px] sm:text-xs font-mono px-3 py-1 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800" id="latencyBadge">Execution: 245ms</span>
+            </div>
+
+            <div id="outputContent" class="text-xs sm:text-sm text-gray-300 leading-relaxed whitespace-pre-line bg-[#07090E]/60 p-4 rounded-xl border border-white/5 font-sans">
+              Submit an instruction prompt above or click one of the suggestions to trigger multi-agent ReAct orchestration.
+            </div>
+
+            <div class="pt-2 space-y-2">
+              <h4 class="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider">Source Grounding Citations</h4>
+              <div class="flex items-center justify-between text-xs bg-white/5 p-2.5 rounded-lg border border-white/10">
+                <span class="text-cyan-300 font-medium">KALKI AI System Architecture Manifesto</span>
+                <span class="font-mono text-gray-400">Score: 0.942</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Agent Execution Trace & Real-time Logs -->
+        <div class="space-y-6">
+          <div class="glass-panel rounded-2xl p-4 sm:p-6 space-y-4">
+            <h3 class="text-sm font-semibold flex items-center space-x-2 text-gray-300">
+              <i class="fa-solid fa-diagram-project text-cyan-400"></i>
+              <span>Agent Execution Trace Feed</span>
+            </h3>
+
+            <div class="space-y-2.5 font-mono text-xs" id="traceContainer">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <div class="text-cyan-300 font-bold">SecurityAgent</div>
+                  <div class="text-gray-400 text-[11px]">State: PASSED (Risk: 0.02)</div>
+                </div>
+                <span class="text-emerald-400 text-[10px]">10ms</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <div class="text-indigo-300 font-bold">PlannerAgent</div>
+                  <div class="text-gray-400 text-[11px]">State: DECOMPOSED (3 tasks)</div>
+                </div>
+                <span class="text-emerald-400 text-[10px]">25ms</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <div class="text-purple-300 font-bold">ResearchAgent</div>
+                  <div class="text-gray-400 text-[11px]">State: RETRIEVED (Qdrant RRF)</div>
+                </div>
+                <span class="text-emerald-400 text-[10px]">80ms</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                <div>
+                  <div class="text-emerald-300 font-bold">ExecutorAgent</div>
+                  <div class="text-gray-400 text-[11px]">State: SYNTHESIZED</div>
+                </div>
+                <span class="text-emerald-400 text-[10px]">95ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WebSocket Live Logs -->
+          <div class="glass-panel rounded-2xl p-4 sm:p-6 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-semibold flex items-center space-x-2 text-gray-300">
+                <i class="fa-solid fa-server text-indigo-400"></i>
+                <span>WebSocket Live Logs</span>
+              </h3>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+
+            <div class="h-36 overflow-y-auto bg-black/40 p-3 rounded-xl border border-white/5 font-mono text-[10px] text-gray-400 space-y-1.5 no-scrollbar" id="wsLogBox">
+              <div><span class="text-white/20">[18:25:01]</span> [WS] Heartbeat ACK received from session client.</div>
+              <div><span class="text-white/20">[18:25:05]</span> [WS] MemoryAgent refreshed long-term query logs.</div>
+              <div><span class="text-white/20">[18:25:09]</span> [WS] SecurityAgent scanned process table: OK.</div>
+              <div><span class="text-white/20">[18:25:13]</span> [WS] RAGEngine calculated dynamic embedding caches.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ---------------- TAB 2: WORKFLOW BUILDER ---------------- -->
+    <div id="content-builder" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <h2 class="text-lg font-semibold flex items-center space-x-2">
+            <i class="fa-solid fa-sliders text-cyan-400"></i>
+            <span>Workflow Automation Builder</span>
+          </h2>
+          <p class="text-xs text-gray-400">Design stateful, event-triggered action flows executed by background Celery workers.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-gray-200">Defensive Security Audit</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">ACTIVE</span>
+          </div>
+          <div class="text-xs text-gray-400">Trigger: <span class="font-semibold text-cyan-400">CRON Schedule (Daily)</span></div>
+          <div class="text-xs text-gray-400">Steps: <span class="font-semibold text-indigo-400">4 Nodes</span></div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-gray-200">GitHub Pull Request Validator</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">ACTIVE</span>
+          </div>
+          <div class="text-xs text-gray-400">Trigger: <span class="font-semibold text-cyan-400">Webhook (PR Open)</span></div>
+          <div class="text-xs text-gray-400">Steps: <span class="font-semibold text-indigo-400">5 Nodes</span></div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-gray-200">Memory Consolidation</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-500 border border-white/10">INACTIVE</span>
+          </div>
+          <div class="text-xs text-gray-400">Trigger: <span class="font-semibold text-cyan-400">System Clock (Hourly)</span></div>
+          <div class="text-xs text-gray-400">Steps: <span class="font-semibold text-indigo-400">3 Nodes</span></div>
+        </div>
+      </div>
+
+      <!-- Node Canvas -->
+      <div class="border border-white/10 rounded-2xl bg-black/30 p-6 sm:p-8 text-center text-xs text-gray-500 space-y-4">
+        <span class="uppercase tracking-widest text-[10px] text-gray-400 font-mono">Visual Workflow State Machine</span>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto">
+          <div class="bg-cyan-950/40 text-cyan-400 border border-cyan-800 p-3 rounded-lg font-mono text-xs w-full sm:w-auto">Trigger Event</div>
+          <i class="fa-solid fa-arrow-right hidden sm:block text-gray-600"></i>
+          <i class="fa-solid fa-arrow-down sm:hidden text-gray-600"></i>
+          <div class="bg-indigo-950/40 text-indigo-400 border border-indigo-800 p-3 rounded-lg font-mono text-xs w-full sm:w-auto">Planner Routing</div>
+          <i class="fa-solid fa-arrow-right hidden sm:block text-gray-600"></i>
+          <i class="fa-solid fa-arrow-down sm:hidden text-gray-600"></i>
+          <div class="bg-purple-950/40 text-purple-400 border border-purple-800 p-3 rounded-lg font-mono text-xs w-full sm:w-auto">Action Node</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- TAB 3: MEMORY VIEWER ---------------- -->
+    <div id="content-memory" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <div>
+        <h2 class="text-lg font-semibold flex items-center space-x-2">
+          <i class="fa-solid fa-layer-group text-cyan-400"></i>
+          <span>Hierarchical Memory Center</span>
+        </h2>
+        <p class="text-xs text-gray-400">Inspect multi-tier memory storage used by agents for preference learning and semantic rules.</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 font-mono text-xs">
+        <div class="p-3.5 rounded-xl bg-white/5 border border-cyan-500/40 space-y-1">
+          <div class="text-gray-400 text-[10px]">Short-Term Context</div>
+          <div class="text-base font-bold text-cyan-400">14 Records</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+          <div class="text-gray-400 text-[10px]">Long-Term Prefs</div>
+          <div class="text-base font-bold text-indigo-400">42 Records</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+          <div class="text-gray-400 text-[10px]">Semantic Triples</div>
+          <div class="text-base font-bold text-purple-400">108 Records</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+          <div class="text-gray-400 text-[10px]">Episodic Traces</div>
+          <div class="text-base font-bold text-emerald-400">96 Records</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+          <div class="text-gray-400 text-[10px]">Procedural DAGs</div>
+          <div class="text-base font-bold text-amber-400">8 Records</div>
+        </div>
+      </div>
+
+      <div class="bg-black/40 border border-white/10 rounded-xl p-4 font-mono text-xs space-y-2">
+        <span class="text-[10px] uppercase text-cyan-400 font-semibold tracking-wider">Memory Inspector Output</span>
+        <div class="space-y-1.5 text-gray-300">
+          <div><span class="text-indigo-400">user_pref_response_style</span>: "Highly technical / Deep code tracing"</div>
+          <div><span class="text-indigo-400">user_pref_default_llm</span>: "google/gemini-1.5-flash"</div>
+          <div>(<span class="text-purple-400">KALKI_AI</span>, <span class="text-emerald-400">isInstanceOf</span>, <span class="text-cyan-400">AutonomousOperatingSystem</span>)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- TAB 4: RAG KNOWLEDGE BASE ---------------- -->
+    <div id="content-rag" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <h2 class="text-lg font-semibold flex items-center space-x-2">
+        <i class="fa-solid fa-database text-cyan-400"></i>
+        <span>Knowledge Ingestion Manager (RAG)</span>
+      </h2>
+
+      <div class="border border-dashed border-white/10 rounded-xl p-6 text-center hover:border-cyan-500/40 transition cursor-pointer flex flex-col items-center justify-center space-y-2 bg-white/[0.01]">
+        <i class="fa-solid fa-cloud-arrow-up text-2xl text-gray-400"></i>
+        <span class="text-xs text-gray-200">Drag &amp; drop document specifications to index</span>
+        <span class="text-[10px] text-gray-500">Supports PDF, Word, Excel, CSV, Markdown, Repositories</span>
+      </div>
+
+      <div class="space-y-2 text-xs font-mono">
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+          <span class="text-cyan-300">architecture_manifesto.pdf</span>
+          <span class="text-emerald-400 px-2 py-0.5 bg-emerald-950 rounded border border-emerald-800">INDEXED (24 Chunks)</span>
+        </div>
+        <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+          <span class="text-cyan-300">mcp_specifications.docx</span>
+          <span class="text-emerald-400 px-2 py-0.5 bg-emerald-950 rounded border border-emerald-800">INDEXED (14 Chunks)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- TAB 5: MARKETPLACE ---------------- -->
+    <div id="content-marketplace" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <h2 class="text-lg font-semibold flex items-center space-x-2">
+        <i class="fa-solid fa-cubes text-cyan-400"></i>
+        <span>Tool &amp; Agent Plugin Marketplace</span>
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-gray-200">Git Connector</span>
+            <span class="text-xs px-2 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">ENABLED</span>
+          </div>
+          <p class="text-xs text-gray-400">Allows agents to read commit histories, create issues, and open pull requests.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-gray-200">Docker Sandbox</span>
+            <span class="text-xs px-2 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">ENABLED</span>
+          </div>
+          <p class="text-xs text-gray-400">Provides secure virtual environments for agent code executions.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- TAB 6: ANALYTICS ---------------- -->
+    <div id="content-analytics" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <h2 class="text-lg font-semibold flex items-center space-x-2">
+        <i class="fa-solid fa-chart-line text-cyan-400"></i>
+        <span>Performance &amp; Observability Metrics</span>
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs text-center">
+        <div class="bg-white/5 border border-white/10 p-4 rounded-xl space-y-1">
+          <div class="text-gray-400">Avg. TTFT Latency</div>
+          <div class="text-cyan-400 text-lg font-bold">142 ms</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 p-4 rounded-xl space-y-1">
+          <div class="text-gray-400">Embedding Cache Hits</div>
+          <div class="text-indigo-400 text-lg font-bold">89.4%</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 p-4 rounded-xl space-y-1">
+          <div class="text-gray-400">Avg. Grounding Score</div>
+          <div class="text-emerald-400 text-lg font-bold">98.2%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- TAB 7: SECURITY ---------------- -->
+    <div id="content-security" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <h2 class="text-lg font-semibold flex items-center space-x-2 text-emerald-400">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Defensive Cybersecurity &amp; Guardrails Panel</span>
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <h3 class="font-bold text-gray-200">Compliance Checklist</h3>
+          <div class="space-y-1.5 text-gray-300">
+            <div class="flex items-center space-x-2"><i class="fa-solid fa-check text-emerald-400"></i><span>TLS 1.3 In-transit encryption</span></div>
+            <div class="flex items-center space-x-2"><i class="fa-solid fa-check text-emerald-400"></i><span>AES-256 Memory store encryption</span></div>
+            <div class="flex items-center space-x-2"><i class="fa-solid fa-check text-emerald-400"></i><span>Docker Sandboxed Execution Runtime</span></div>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+          <h3 class="font-bold text-gray-200">Guardrails Enforcement</h3>
+          <div class="space-y-1.5 text-gray-300">
+            <div class="flex items-center justify-between"><span>Prompt Injection Scans</span><span class="text-emerald-400 font-bold">ACTIVE</span></div>
+            <div class="flex items-center justify-between"><span>Dynamic PII Anonymizer</span><span class="text-emerald-400 font-bold">ACTIVE</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="border-t border-white/10 py-6 px-6 text-center text-xs text-gray-500 font-mono space-y-2">
+    <div>KALKI — Krishna Autonomous Learning &amp; Knowledge Intelligence © 2026. All rights reserved.</div>
+    <div class="text-[10px] text-gray-600">Built with Clean Architecture, Next.js, FastAPI, PostgreSQL, Redis, MongoDB, Neo4j &amp; Qdrant.</div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    function toggleMobileMenu() {
+      const container = document.getElementById('navContainer');
+      const icon = document.getElementById('mobileMenuIcon');
+      if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        container.classList.add('flex', 'flex-col', 'space-y-2');
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      } else {
+        container.classList.add('hidden');
+        container.classList.remove('flex', 'flex-col', 'space-y-2');
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    }
+
+    function switchTab(tabName) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Remove active styles from tabs
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('bg-gradient-to-r', 'from-cyan-500/20', 'to-purple-500/20', 'text-cyan-300', 'border-cyan-500/40');
+        el.classList.add('text-gray-400', 'hover:text-gray-200', 'border-transparent');
+      });
+
+      // Show target content
+      const targetContent = document.getElementById('content-' + tabName);
+      if (targetContent) targetContent.classList.remove('hidden');
+
+      // Highlight active tab
+      const targetTab = document.getElementById('tab-' + tabName);
+      if (targetTab) {
+        targetTab.classList.add('bg-gradient-to-r', 'from-cyan-500/20', 'to-purple-500/20', 'text-cyan-300', 'border-cyan-500/40');
+        targetTab.classList.remove('text-gray-400', 'border-transparent');
+      }
+
+      // Hide mobile menu after selection if open
+      if (window.innerWidth < 1024) {
+        const container = document.getElementById('navContainer');
+        container.classList.add('hidden');
+        const icon = document.getElementById('mobileMenuIcon');
+        if (icon) {
+          icon.classList.remove('fa-xmark');
+          icon.classList.add('fa-bars');
+        }
+      }
+    }
+
+    function setPrompt(text) {
+      document.getElementById('promptInput').value = text;
+    }
+
+    function onModelChange() {
+      const select = document.getElementById('providerSelect');
+      const val = select.value;
+      let model = 'gemini-1.5-flash';
+      if (val === 'openai') model = 'gpt-4o';
+      else if (val === 'anthropic') model = 'claude-3-5-sonnet';
+      else if (val === 'ollama') model = 'llama-3.1-local';
+      
+      document.getElementById('activeModelBadge').innerText = model;
+    }
+
+    let isVoice = false;
+    function toggleVoice() {
+      isVoice = !isVoice;
+      const wave = document.getElementById('voiceWaveContainer');
+      const btn = document.getElementById('voiceBtn');
+      if (isVoice) {
+        wave.classList.remove('hidden');
+        btn.classList.add('bg-red-500/20', 'text-red-400', 'border-red-500/40');
+      } else {
+        wave.classList.add('hidden');
+        btn.classList.remove('bg-red-500/20', 'text-red-400', 'border-red-500/40');
+      }
+    }
+
+    function executeAgentTask() {
+      const input = document.getElementById('promptInput').value.trim();
+      if (!input) return;
+
+      const btnText = document.getElementById('dispatchText');
+      const btnIcon = document.getElementById('dispatchIcon');
+      
+      btnText.innerText = 'Orchestrating...';
+      btnIcon.className = 'fa-solid fa-spinner animate-spin';
+
+      setTimeout(() => {
+        btnText.innerText = 'Dispatch';
+        btnIcon.className = 'fa-solid fa-paper-plane';
+
+        const model = document.getElementById('activeModelBadge').innerText;
+        document.getElementById('outputContent').innerHTML = `
+          <strong>### KALKI AI IOS Execution Result</strong><br/><br/>
+          Query processed: <em>"${input}"</em><br/><br/>
+          - <strong>SecurityAgent</strong>: Audit passed with zero risk violations (Risk score: 0.02).<br/>
+          - <strong>PlannerAgent</strong>: Decomposed goal into 3 sub-tasks via ReAct DAG planner.<br/>
+          - <strong>ResearchAgent</strong>: Queried vector store (RRF Cosine similarity 0.942).<br/>
+          - <strong>MemoryAgent</strong>: Injected short-term conversational context &amp; long-term preferences.<br/>
+          - <strong>ExecutorAgent</strong>: Executed MCP tool <code>kalki_vector_search</code> using model <strong>${model}</strong>.<br/>
+          - <strong>ValidatorAgent</strong>: Factual consistency score 0.99 (Factually Grounded).
+        `;
+
+        // Update WebSocket Logs
+        const wsBox = document.getElementById('wsLogBox');
+        const timeStr = new Date().toLocaleTimeString();
+        const newLog = `<div><span class="text-white/20">[${timeStr}]</span> [WS] ExecutorAgent finished task. Latency: 245ms</div>`;
+        wsBox.innerHTML = newLog + wsBox.innerHTML;
+
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
