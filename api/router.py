@@ -7,6 +7,7 @@ import json
 from services.inference import LLMProviderFactory
 from services.task_queue import dispatch_autonomous_agent_task, celery_app
 from rag.pipeline import rag_pipeline
+from auth.security import input_sanitizer, rate_limiter
 
 router = APIRouter()
 
@@ -25,6 +26,12 @@ async def chat_completions(payload: ChatCompletionRequest):
     if not payload.messages:
         raise HTTPException(status_code=400, detail="Messages array cannot be empty")
     
+    # Perimeter Security Sanitization Check
+    for msg in payload.messages:
+        valid, err = input_sanitizer.sanitize_text(msg.content)
+        if not valid:
+            raise HTTPException(status_code=400, detail=err)
+            
     raw_messages = [{"role": msg.role, "content": msg.content} for msg in payload.messages]
     
     try:
