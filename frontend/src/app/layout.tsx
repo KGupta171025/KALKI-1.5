@@ -4,6 +4,11 @@ import type { Metadata, Viewport } from 'next';
 export const metadata: Metadata = {
   title: 'KALKI AI — Master Intelligence Operating System',
   description: 'Unified enterprise AI platform combining LLMs, VLMs, autonomous multi-agent orchestration, hybrid RAG, and defensive cybersecurity.',
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.ico',
+    apple: '/kalki_symbol.jpg',
+  },
 };
 
 export const viewport: Viewport = {
