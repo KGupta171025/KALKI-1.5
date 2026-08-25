@@ -6,6 +6,7 @@ import asyncio
 import json
 from services.inference import LLMProviderFactory
 from services.task_queue import dispatch_autonomous_agent_task, celery_app
+from services.semantic_cache import semantic_cache
 from rag.pipeline import rag_pipeline
 
 router = APIRouter()
@@ -25,8 +26,14 @@ async def chat_completions(payload: ChatCompletionRequest):
     if not payload.messages:
         raise HTTPException(status_code=400, detail="Messages array cannot be empty")
     
+    last_prompt = payload.messages[-1].content
     raw_messages = [{"role": msg.role, "content": msg.content} for msg in payload.messages]
     
+    # 1. Check Semantic Cache for <10ms instant response
+    cached = semantic_cache.get(last_prompt)
+    if cached:
+        return cached
+
     try:
         llm = LLMProviderFactory.get_provider(
             provider_name=payload.provider,
@@ -37,7 +44,8 @@ async def chat_completions(payload: ChatCompletionRequest):
             messages=raw_messages,
             temperature=payload.temperature
         )
-        return {
+        
+        response_data = {
             "status": "SUCCESS",
             "latency_ms": 145,
             "response": result["text"],
@@ -51,9 +59,14 @@ async def chat_completions(payload: ChatCompletionRequest):
             ],
             "model_metadata": {
                 "model_used": result["model"],
-                "usage": result.get("usage", {})
+                "usage": result.get("usage", {}),
+                "sampling_tuned": result.get("sampling_tuned", {})
             }
         }
+        
+        # Save response in semantic cache
+        semantic_cache.put(last_prompt, response_data)
+        return response_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference execution failed: {str(e)}")
 

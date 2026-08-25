@@ -4,6 +4,19 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 from config.settings import settings
 
+class TaskAdaptiveSamplingTuner:
+    """
+    Auto-tunes LLM sampling hyperparameters based on prompt intent classification.
+    """
+    @staticmethod
+    def auto_tune(prompt: str) -> Dict[str, float]:
+        p_lower = prompt.lower()
+        if any(kw in p_lower for kw in ["code", "python", "function", "bug", "audit", "sql", "math"]):
+            return {"temperature": 0.0, "top_p": 0.1}
+        elif any(kw in p_lower for kw in ["write", "story", "generate", "brainstorm", "poem"]):
+            return {"temperature": 0.7, "top_p": 0.9}
+        return {"temperature": 0.2, "top_p": 0.85}
+
 class ILLMProvider(ABC):
     """
     Interface for LLM Model Provider adapters.
@@ -15,6 +28,7 @@ class ILLMProvider(ABC):
         messages: List[Dict[str, str]], 
         temperature: float = 0.2, 
         max_tokens: int = 2048,
+        tools: Optional[List[Dict[str, Any]]] = None,
         **kwargs
     ) -> Dict[str, Any]:
         pass
@@ -25,7 +39,10 @@ class OpenAIAdapter(ILLMProvider):
         self.model = model
         self.endpoint = "https://api.openai.com/v1/chat/completions"
 
-    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, **kwargs) -> Dict[str, Any]:
+    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, tools: Optional[List[Dict[str, Any]]] = None, **kwargs) -> Dict[str, Any]:
+        last_prompt = messages[-1]["content"] if messages else ""
+        tuned = TaskAdaptiveSamplingTuner.auto_tune(last_prompt)
+        
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
@@ -33,9 +50,13 @@ class OpenAIAdapter(ILLMProvider):
         payload = {
             "model": self.model,
             "messages": messages,
-            "temperature": temperature,
+            "temperature": tuned["temperature"],
+            "top_p": tuned["top_p"],
             "max_tokens": max_tokens
         }
+        if tools:
+            payload["tools"] = tools
+
         async with httpx.AsyncClient() as client:
             response = await client.post(self.endpoint, json=payload, headers=headers, timeout=15.0)
             response.raise_for_status()
@@ -43,7 +64,8 @@ class OpenAIAdapter(ILLMProvider):
             return {
                 "text": data["choices"][0]["message"]["content"],
                 "model": self.model,
-                "usage": data["usage"]
+                "usage": data["usage"],
+                "sampling_tuned": tuned
             }
 
 class GoogleAdapter(ILLMProvider):
@@ -52,7 +74,10 @@ class GoogleAdapter(ILLMProvider):
         self.model = model
         self.endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
 
-    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, **kwargs) -> Dict[str, Any]:
+    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, tools: Optional[List[Dict[str, Any]]] = None, **kwargs) -> Dict[str, Any]:
+        last_prompt = messages[-1]["content"] if messages else ""
+        tuned = TaskAdaptiveSamplingTuner.auto_tune(last_prompt)
+        
         contents = []
         for msg in messages:
             role = "user" if msg["role"] == "user" else "model"
@@ -64,7 +89,7 @@ class GoogleAdapter(ILLMProvider):
         payload = {
             "contents": contents,
             "generationConfig": {
-                "temperature": temperature,
+                "temperature": tuned["temperature"],
                 "maxOutputTokens": max_tokens
             }
         }
@@ -75,7 +100,8 @@ class GoogleAdapter(ILLMProvider):
             return {
                 "text": data["candidates"][0]["content"]["parts"][0]["text"],
                 "model": self.model,
-                "usage": {"total_tokens": 0}
+                "usage": {"total_tokens": 0},
+                "sampling_tuned": tuned
             }
 
 class OllamaAdapter(ILLMProvider):
@@ -84,12 +110,15 @@ class OllamaAdapter(ILLMProvider):
         self.model = model
         self.endpoint = f"{host}/api/chat"
 
-    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, **kwargs) -> Dict[str, Any]:
+    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, tools: Optional[List[Dict[str, Any]]] = None, **kwargs) -> Dict[str, Any]:
+        last_prompt = messages[-1]["content"] if messages else ""
+        tuned = TaskAdaptiveSamplingTuner.auto_tune(last_prompt)
+
         payload = {
             "model": self.model,
             "messages": messages,
             "options": {
-                "temperature": temperature,
+                "temperature": tuned["temperature"],
                 "num_predict": max_tokens
             },
             "stream": False
@@ -101,19 +130,22 @@ class OllamaAdapter(ILLMProvider):
             return {
                 "text": data["message"]["content"],
                 "model": self.model,
-                "usage": {"total_tokens": data.get("eval_count", 0)}
+                "usage": {"total_tokens": data.get("eval_count", 0)},
+                "sampling_tuned": tuned
             }
 
 class MockAdapter(ILLMProvider):
     def __init__(self, model: str = "kalki-mock-v2"):
         self.model = model
 
-    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, **kwargs) -> Dict[str, Any]:
+    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, tools: Optional[List[Dict[str, Any]]] = None, **kwargs) -> Dict[str, Any]:
         last_prompt = messages[-1]['content'] if messages else "Hello"
+        tuned = TaskAdaptiveSamplingTuner.auto_tune(last_prompt)
         return {
-            "text": f"### KALKI AI OS Response\n\nProcessed query via mock adapter: **\"{last_prompt}\"**\n\n- **Security Gate**: Passed (Risk score: 0.01)\n- **Planner DAG**: Decomposed into 3 tasks\n- **RAG Ingestion**: Querying vector indices (Similarity 0.95)\n- **Execution Status**: Success",
+            "text": f"### KALKI AI OS Response\n\nProcessed query via mock adapter: **\"{last_prompt}\"**\n\n- **Security Gate**: Passed (Risk score: 0.01)\n- **Planner DAG**: Decomposed into 3 tasks\n- **Sampling Auto-Tuner**: Temp={tuned['temperature']} (Intent classified)\n- **RAG Ingestion**: Querying vector indices (Similarity 0.95)\n- **Execution Status**: Success",
             "model": self.model,
-            "usage": {"total_tokens": 42}
+            "usage": {"total_tokens": 42},
+            "sampling_tuned": tuned
         }
 
 class ResilientLLMProviderPool(ILLMProvider):
@@ -125,12 +157,12 @@ class ResilientLLMProviderPool(ILLMProvider):
         self.primary = primary
         self.fallback = fallback
 
-    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, **kwargs) -> Dict[str, Any]:
+    async def generate_completion(self, messages: List[Dict[str, str]], temperature: float = 0.2, max_tokens: int = 2048, tools: Optional[List[Dict[str, Any]]] = None, **kwargs) -> Dict[str, Any]:
         try:
-            return await self.primary.generate_completion(messages, temperature, max_tokens, **kwargs)
+            return await self.primary.generate_completion(messages, temperature, max_tokens, tools, **kwargs)
         except Exception as e:
             print(f"[LLM Load Balancer] Primary provider execution failed ({str(e)}). Auto-failing over to backup adapter...")
-            res = await self.fallback.generate_completion(messages, temperature, max_tokens, **kwargs)
+            res = await self.fallback.generate_completion(messages, temperature, max_tokens, tools, **kwargs)
             res["failover_occurred"] = True
             return res
 
