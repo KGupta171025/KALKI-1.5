@@ -32,7 +32,7 @@ def test_chat_completions_mock():
     assert response.status_code == 200
     res_data = response.json()
     assert res_data["status"] == "SUCCESS"
-    assert "Mock execution" in res_data["choices"][0]["message"]["content"]
+    assert "mock adapter" in res_data["choices"][0]["message"]["content"]
 
 def test_task_dispatch_route():
     """
