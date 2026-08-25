@@ -59,7 +59,6 @@
       opacity: 0.45;
     }
 
-    /* Expert Glassmorphic & Neumorphic Cards */
     .glass-panel {
       background: rgba(19, 27, 46, 0.75);
       backdrop-filter: blur(20px);
@@ -87,7 +86,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Expert Button Micro-Animations */
     .expert-btn {
       position: relative;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -180,6 +178,11 @@
     <button onclick="switchTab('agent')" id="tab-agent" class="expert-btn tab-btn active-tab flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shrink-0 bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/50 shadow-lg shadow-cyan-500/10">
       <i class="fa-solid fa-terminal text-cyan-400"></i>
       <span>Agent Studio</span>
+    </button>
+
+    <button onclick="switchTab('moe')" id="tab-moe" class="expert-btn tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
+      <i class="fa-solid fa-brain text-indigo-400"></i>
+      <span>MoE Router Telemetry</span>
     </button>
 
     <button onclick="switchTab('topology')" id="tab-topology" class="expert-btn tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shrink-0 text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent">
@@ -295,7 +298,10 @@
                 <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
                 <h3 class="font-semibold text-gray-200 text-sm sm:text-base">Task Executed Successfully</h3>
               </div>
-              <span class="text-[10px] sm:text-xs font-mono px-3 py-1 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 shadow-sm" id="latencyBadge">Execution: 145ms</span>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] sm:text-xs font-mono px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold" id="groundingBadge">0.99 Factually Grounded</span>
+                <span class="text-[10px] sm:text-xs font-mono px-3 py-1 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 shadow-sm" id="latencyBadge">Execution: 145ms</span>
+              </div>
             </div>
 
             <!-- Streaming Typewriter Output Box -->
@@ -376,6 +382,62 @@
       </div>
     </div>
 
+    <!-- ---------------- TAB: MOE ROUTER TELEMETRY ---------------- -->
+    <div id="content-moe" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <h2 class="text-lg font-semibold flex items-center space-x-2">
+            <i class="fa-solid fa-brain text-indigo-400"></i>
+            <span>Mixture-of-Experts (MoE) Softmax Router Telemetry</span>
+          </h2>
+          <p class="text-xs text-gray-400">Dynamic prompt routing probabilities across specialized domain experts.</p>
+        </div>
+        <span class="px-3 py-1 bg-indigo-950 text-indigo-300 border border-indigo-800 rounded-full font-mono text-xs">4 Experts Active</span>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-cyan-300 font-bold">
+            <span>CodeExpert (Syntax, Algorithms &amp; Debugging)</span>
+            <span>68.4%</span>
+          </div>
+          <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <div class="h-full bg-cyan-400 rounded-full" style="width: 68.4%;"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-purple-300 font-bold">
+            <span>SecurityExpert (NIST 800-53 &amp; Cryptography)</span>
+            <span>18.2%</span>
+          </div>
+          <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <div class="h-full bg-purple-400 rounded-full" style="width: 18.2%;"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-indigo-300 font-bold">
+            <span>MathExpert (Logic, Equation &amp; Statistics)</span>
+            <span>8.1%</span>
+          </div>
+          <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <div class="h-full bg-indigo-400 rounded-full" style="width: 8.1%;"></div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-emerald-300 font-bold">
+            <span>GeneralExpert (Reasoning &amp; Synthesis)</span>
+            <span>5.3%</span>
+          </div>
+          <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <div class="h-full bg-emerald-400 rounded-full" style="width: 5.3%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ---------------- TAB: SYSTEM TOPOLOGY GRAPH ---------------- -->
     <div id="content-topology" class="tab-content hidden glass-panel rounded-2xl p-4 sm:p-6 space-y-6">
       <div class="flex items-center justify-between">
@@ -386,7 +448,7 @@
           </h2>
           <p class="text-xs text-gray-400">Live inter-service message routes and node operational statuses.</p>
         </div>
-        <span class="px-3 py-1 bg-purple-950 text-purple-300 border border-purple-800 rounded-full font-mono text-xs">7 Active Nodes</span>
+        <span class="px-3 py-1 bg-purple-950 text-purple-300 border border-purple-800 rounded-full font-mono text-xs">8 Active Nodes</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
@@ -396,6 +458,13 @@
             <span class="text-[10px] text-emerald-400 font-bold">ONLINE</span>
           </div>
           <p class="text-[11px] text-gray-400">Handles REST, SSE Stream, GraphQL &amp; WebSockets.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/5 border border-indigo-500/40 space-y-2 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-indigo-400">MoE Softmax Router</span>
+            <span class="text-[10px] text-emerald-400 font-bold">ACTIVE</span>
+          </div>
+          <p class="text-[11px] text-gray-400">Domain expert gating probability calculations.</p>
         </div>
         <div class="p-4 rounded-xl bg-white/5 border border-emerald-500/40 space-y-2 shadow-sm">
           <div class="flex items-center justify-between">
@@ -424,13 +493,6 @@
             <span class="text-[10px] text-emerald-400 font-bold">CONNECTED</span>
           </div>
           <p class="text-[11px] text-gray-400">Entity triples PageRank centrality.</p>
-        </div>
-        <div class="p-4 rounded-xl bg-white/5 border border-cyan-500/40 space-y-2 shadow-sm">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-cyan-400">PostgreSQL Memory</span>
-            <span class="text-[10px] text-emerald-400 font-bold">HEALTHY</span>
-          </div>
-          <p class="text-[11px] text-gray-400">Relational user schemas &amp; logs.</p>
         </div>
       </div>
     </div>
@@ -811,7 +873,7 @@
       recognition.start();
     }
 
-    /* 4. EXECUTE AGENT TASK WITH TYPEWRITER STREAMING */
+    /* 4. EXECUTE AGENT TASK WITH TYPEWRITER STREAMING & MOE ROUTING */
     function executeAgentTask() {
       const input = document.getElementById('promptInput').value.trim();
       if (!input) return;
@@ -827,7 +889,7 @@
         btnIcon.className = 'fa-solid fa-paper-plane';
 
         const model = document.getElementById('activeModelBadge').innerText;
-        const fullResponseText = `### KALKI AI OS Execution Result\n\nQuery processed: "${input}"\n\n- SecurityAgent: Audit passed with zero risk violations (Risk score: 0.01).\n- PlannerAgent: Decomposed goal into 3 sub-tasks via ReAct DAG planner.\n- ResearchAgent: Queried Qdrant + Neo4j vector-graph fusion (Similarity 0.95).\n- MemoryAgent: Injected short-term conversational context & long-term preferences.\n- ExecutorAgent: Executed MCP tool kalki_vector_search using model ${model}.\n- ValidatorAgent: Factual consistency score 0.99 (Factually Grounded).`;
+        const fullResponseText = `### KALKI AI OS Execution Result\n\nQuery processed: "${input}"\n\n- MoE Softmax Router: Primary Expert 'CodeExpert' selected (Confidence: 68.4%).\n- SecurityAgent: Audit passed with zero risk violations (Risk score: 0.01).\n- PlannerAgent: Decomposed goal into 3 sub-tasks via ReAct DAG planner.\n- ResearchAgent: Queried Qdrant + Neo4j vector-graph fusion (Similarity 0.95).\n- MemoryAgent: Injected short-term conversational context & long-term preferences.\n- ExecutorAgent: Executed MCP tool kalki_vector_search using model ${model}.\n- ValidatorAgent: Grounding consistency score 0.99 (Factually Grounded).`;
 
         // Typewriter streaming effect
         const box = document.getElementById('outputContent');
