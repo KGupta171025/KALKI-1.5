@@ -1,13 +1,17 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pytest
 import asyncio
 from app.agents.orchestrator import agent_orchestrator
 from app.rag.engine import rag_engine
 from app.core.security import sanitize_and_check_guardrails
 
-@pytest.mark.asyncio
-async def test_agent_orchestrator_execution():
+def test_agent_orchestrator_execution():
     query = "Explain KALKI AI multi-agent orchestration architecture."
-    result = await agent_orchestrator.execute_task(query)
+    result = asyncio.run(agent_orchestrator.execute_task(query))
     
     assert result["status"] == "SUCCESS"
     assert "trace_id" in result

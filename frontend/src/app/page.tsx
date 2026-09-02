@@ -747,7 +747,7 @@ Query processed successfully: **"${inputQuery}"**
             <div className="space-y-2">
               <span className="text-xs font-semibold text-gray-400">System Logs Trace (Last 2 minutes)</span>
               <div className="h-40 bg-black/30 border border-white/10 rounded-xl p-4 font-mono text-xs text-gray-500 overflow-y-auto space-y-1 scrollbar-thin">
-                <div>[INFO] Model Provider initialized: Anthropic API -> OK</div>
+                <div>[INFO] Model Provider initialized: Anthropic API -&gt; OK</div>
                 <div>[INFO] Qdrant connection pool active. Nodes: 1</div>
                 <div>[INFO] Celery tasks synced with RabbitMQ AMQP broker exchanges.</div>
               </div>

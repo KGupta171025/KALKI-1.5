@@ -1,5 +1,5 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "KALKI AI — Intelligence Operating System"
@@ -30,7 +30,6 @@ class Settings(BaseSettings):
     LATENCY_BUDGET_MS: int = 500
     RAG_LATENCY_BUDGET_MS: int = 200
 
-    class Config:
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True, extra="ignore")
 
 settings = Settings()

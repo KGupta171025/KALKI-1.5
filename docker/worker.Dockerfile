@@ -21,6 +21,7 @@ COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 
 # Copy all Clean Architecture directories from repository root
+COPY agents/ ./agents/
 COPY api/ ./api/
 COPY auth/ ./auth/
 COPY config/ ./config/
