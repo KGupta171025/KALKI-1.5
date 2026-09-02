@@ -37,6 +37,8 @@ jobs:
           npm run build || true
           mkdir -p out
           cp ../index.html out/index.html || true
+          cp -r ../kalki_symbol.* out/ || true
+          touch out/.nojekyll
         env:
           NEXT_PUBLIC_API_URL: ""
 
