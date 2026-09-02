@@ -139,9 +139,22 @@ Query processed successfully: **"${inputQuery}"**
       {/* 1. MASTER HEADER */}
       <header className="border-b border-white/10 bg-[#0B0F19]/80 backdrop-blur-md px-4 sm:px-6 py-4 sticky top-0 z-50 flex items-center justify-between">
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 p-[2px] flex items-center justify-center shadow-lg shadow-cyan-500/20">
-            <div className="w-full h-full bg-[#07090E] rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 animate-pulse" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 p-[2px] flex items-center justify-center shadow-lg shadow-cyan-500/30 overflow-hidden">
+            <div className="w-full h-full bg-[#07090E] rounded-[10px] flex items-center justify-center overflow-hidden relative">
+              <img 
+                src="./kalki_symbol.png" 
+                alt="KALKI Symbol" 
+                className="w-full h-full object-cover rounded-[10px]"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const sibling = target.nextElementSibling as HTMLElement;
+                  if (sibling) sibling.style.display = 'flex';
+                }}
+              />
+              <div style={{ display: 'none' }} className="w-full h-full bg-gradient-to-br from-[#0F172A] to-[#07090E] items-center justify-center text-cyan-400">
+                <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
+              </div>
             </div>
           </div>
           <div>
@@ -153,7 +166,7 @@ Query processed successfully: **"${inputQuery}"**
                 IOS v2.0.0
               </span>
             </div>
-            <p className="text-[10px] sm:text-xs text-gray-400 truncate max-w-[200px] sm:max-w-none">Krishna Autonomous Learning &amp; Knowledge Intelligence</p>
+            <p className="text-[10px] sm:text-xs text-gray-400 truncate max-w-[200px] sm:max-w-none">Krishna Artificial Lattice Keystone Intelligence</p>
           </div>
         </div>
 
