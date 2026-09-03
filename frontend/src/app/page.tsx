@@ -91,7 +91,7 @@ export default function KalkiDashboard() {
         trace_id: "tr-" + Math.random().toString(36).substring(2, 10),
         status: "SUCCESS",
         latency_ms: 245,
-        response: `### KALKI AI IOS v2.0.0 Execution Result
+        response: `### KALKI AI IOS v1.5.0 Execution Result
 
 Query processed successfully: **"${inputQuery}"**
 
@@ -163,7 +163,7 @@ Query processed successfully: **"${inputQuery}"**
                 KALKI
               </h1>
               <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded-full">
-                IOS v2.0.0
+                IOS v1.5.0
               </span>
             </div>
             <p className="text-[10px] sm:text-xs text-gray-400 truncate max-w-[200px] sm:max-w-none">Krishna Artificial Lattice Keystone Intelligence</p>
