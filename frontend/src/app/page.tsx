@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { MetalFx, MetalText, MetalBadge } from 'metal-fx';
 import { 
   Cpu, Shield, Database, Network, MessageSquare, Terminal, 
   Upload, Search, CheckCircle2, AlertTriangle, Activity, Zap, 
@@ -19,6 +20,7 @@ export default function KalkiDashboard() {
   const [executionResult, setExecutionResult] = useState<any>(null);
   const [selectedProvider, setSelectedProvider] = useState('google');
   const [selectedModel, setSelectedModel] = useState('gemini-1.5-flash');
+  const [isMounted, setIsMounted] = useState(false);
 
   // WebSocket Live Log Mock State
   const [wsLogs, setWsLogs] = useState<string[]>([]);
@@ -61,6 +63,10 @@ export default function KalkiDashboard() {
   // Audio/Voice Assistant Simulation
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [audioWaves, setAudioWaves] = useState<number[]>([10, 40, 20, 80, 50, 90, 30, 70, 40, 20]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Simulate WebSocket event log ticker
   useEffect(() => {
@@ -337,36 +343,83 @@ Query processed successfully: **"${inputQuery}"**
                     className="w-full h-36 bg-[#07090E]/80 border border-white/10 rounded-xl p-4 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/60 resize-none"
                   />
                   <div className="absolute bottom-3 right-3 flex items-center space-x-2">
-                    {/* Voice Assistant Trigger */}
-                    <button 
-                      onClick={() => setIsVoiceActive(!isVoiceActive)}
-                      className={`p-2 rounded-lg border transition ${
-                        isVoiceActive 
-                          ? 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse' 
-                          : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
-                      }`}
-                      title="Toggle Voice assistant mode"
-                    >
-                      {isVoiceActive ? <Volume2 className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                    </button>
+                    {/* Voice Assistant Trigger with MetalFx Circle */}
+                    {isMounted ? (
+                      <MetalFx preset="chromatic" variant="circle" innerShadow theme="dark" strength={isVoiceActive ? 1 : 0.6}>
+                        <button 
+                          onClick={() => setIsVoiceActive(!isVoiceActive)}
+                          className={`p-2 rounded-full border transition flex items-center justify-center ${
+                            isVoiceActive 
+                              ? 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse' 
+                              : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
+                          }`}
+                          title="Toggle Voice assistant mode"
+                          aria-label="Toggle Voice Mode"
+                        >
+                          {isVoiceActive ? <Volume2 className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                        </button>
+                      </MetalFx>
+                    ) : (
+                      <button 
+                        onClick={() => setIsVoiceActive(!isVoiceActive)}
+                        className="p-2 rounded-lg border bg-white/5 border-white/10 text-gray-400"
+                        title="Toggle Voice assistant mode"
+                      >
+                        {isVoiceActive ? <Volume2 className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                      </button>
+                    )}
 
-                    <button
-                      onClick={handleExecuteTask}
-                      disabled={isExecuting || !inputQuery.trim()}
-                      className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-medium text-sm flex items-center space-x-2 shadow-lg shadow-cyan-500/20 disabled:opacity-50 transition"
-                    >
-                      {isExecuting ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>Executing Agent Loop...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          <span>Dispatch</span>
-                        </>
-                      )}
-                    </button>
+                    {/* Dispatch & Loading Button with MetalFx Chromatic Effect */}
+                    {isMounted ? (
+                      <MetalFx 
+                        preset="chromatic" 
+                        variant="button" 
+                        innerShadow 
+                        theme="dark" 
+                        strength={isExecuting ? 1 : 0.85}
+                        glowGain={isExecuting ? 2.2 : 1}
+                      >
+                        <button
+                          onClick={handleExecuteTask}
+                          disabled={isExecuting || !inputQuery.trim()}
+                          className={`px-5 py-2 rounded-lg font-medium text-sm flex items-center space-x-2 shadow-lg transition ${
+                            isExecuting
+                              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 text-white shadow-cyan-500/40'
+                              : 'bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-cyan-500/20 disabled:opacity-50'
+                          }`}
+                        >
+                          {isExecuting ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin text-cyan-300" />
+                              <span className="font-semibold tracking-wide">Executing Agent Loop...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4" />
+                              <span>Dispatch</span>
+                            </>
+                          )}
+                        </button>
+                      </MetalFx>
+                    ) : (
+                      <button
+                        onClick={handleExecuteTask}
+                        disabled={isExecuting || !inputQuery.trim()}
+                        className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium text-sm flex items-center space-x-2 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+                      >
+                        {isExecuting ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span>Executing Agent Loop...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            <span>Dispatch</span>
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
