@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { MetalFx, MetalText, MetalBadge } from 'metal-fx';
+import React, { useState, useEffect, useRef } from 'react';
+import { MetalFx, MetalText, MetalBadge, useMetalBend, useMetalTextReflection } from 'metal-fx';
 import { 
   Cpu, Shield, Database, Network, MessageSquare, Terminal, 
   Upload, Search, CheckCircle2, AlertTriangle, Activity, Zap, 
@@ -14,6 +14,17 @@ export default function KalkiDashboard() {
   const [activeTab, setActiveTab] = useState<'agent' | 'builder' | 'memory' | 'rag' | 'marketplace' | 'analytics' | 'security'>('agent');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  // MetalFx liquid bend refs for interactive cursor deformation
+  const dispatchBtnRef = useRef<HTMLDivElement>(null);
+  const voiceBtnRef = useRef<HTMLDivElement>(null);
+  const mobileMenuBtnRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+
+  useMetalBend(dispatchBtnRef);
+  useMetalBend(voiceBtnRef);
+  useMetalBend(mobileMenuBtnRef);
+  useMetalTextReflection(textRef);
+
   // Chat / Agent State
   const [inputQuery, setInputQuery] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
@@ -165,12 +176,21 @@ Query processed successfully: **"${inputQuery}"**
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-lg sm:text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
-                KALKI
-              </h1>
-              <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded-full">
-                IOS v1.5.0
-              </span>
+              {isMounted ? (
+                <>
+                  <MetalText font="800 20px Inter, sans-serif" color="#00F0FF">KALKI</MetalText>
+                  <MetalBadge theme="dark" strength={1}>IOS v1.5.0</MetalBadge>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-lg sm:text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+                    KALKI
+                  </h1>
+                  <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded-full">
+                    IOS v1.5.0
+                  </span>
+                </>
+              )}
             </div>
             <p className="text-[10px] sm:text-xs text-gray-400 truncate max-w-[200px] sm:max-w-none">Krishna Artificial Lattice Keystone Intelligence</p>
           </div>
@@ -197,14 +217,26 @@ Query processed successfully: **"${inputQuery}"**
           </div>
         </div>
 
-        {/* Mobile Hamburger Menu Toggle Button */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white"
-          aria-label="Toggle mobile menu"
-        >
-          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile Hamburger Menu Toggle Button with MetalFx */}
+        {isMounted ? (
+          <MetalFx ref={mobileMenuBtnRef} preset="chromatic" variant="circle" innerShadow theme="dark" strength={0.8}>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </MetalFx>
+        ) : (
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white"
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        )}
       </header>
 
       {/* 2. NAVIGATION BAR (Desktop Touch & Mobile Dropdown) */}
@@ -343,9 +375,16 @@ Query processed successfully: **"${inputQuery}"**
                     className="w-full h-36 bg-[#07090E]/80 border border-white/10 rounded-xl p-4 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/60 resize-none"
                   />
                   <div className="absolute bottom-3 right-3 flex items-center space-x-2">
-                    {/* Voice Assistant Trigger with MetalFx Circle */}
+                    {/* Voice Assistant Trigger with MetalFx Circle & Cursor Bend */}
                     {isMounted ? (
-                      <MetalFx preset="chromatic" variant="circle" innerShadow theme="dark" strength={isVoiceActive ? 1 : 0.6}>
+                      <MetalFx 
+                        ref={voiceBtnRef}
+                        preset="chromatic" 
+                        variant="circle" 
+                        innerShadow 
+                        theme="dark" 
+                        strength={isVoiceActive ? 1 : 0.7}
+                      >
                         <button 
                           onClick={() => setIsVoiceActive(!isVoiceActive)}
                           className={`p-2 rounded-full border transition flex items-center justify-center ${
@@ -369,15 +408,17 @@ Query processed successfully: **"${inputQuery}"**
                       </button>
                     )}
 
-                    {/* Dispatch & Loading Button with MetalFx Chromatic Effect */}
+                    {/* Dispatch & Loading Button with MetalFx Chromatic Liquid Bend Shader */}
                     {isMounted ? (
                       <MetalFx 
+                        ref={dispatchBtnRef}
                         preset="chromatic" 
                         variant="button" 
                         innerShadow 
                         theme="dark" 
-                        strength={isExecuting ? 1 : 0.85}
-                        glowGain={isExecuting ? 2.2 : 1}
+                        strength={isExecuting ? 1 : 0.9}
+                        glowGain={isExecuting ? 2.4 : 1.2}
+                        reflectionTargets={voiceBtnRef ? [voiceBtnRef] : undefined}
                       >
                         <button
                           onClick={handleExecuteTask}
