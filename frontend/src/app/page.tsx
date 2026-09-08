@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { MetalFx, MetalText, MetalBadge, useMetalBend, useMetalTextReflection } from 'metal-fx';
+import { recordUserVisit, recordUserAction, recordAgentExecution } from '../lib/firebase';
 import { 
   Cpu, Shield, Database, Network, MessageSquare, Terminal, 
   Upload, Search, CheckCircle2, AlertTriangle, Activity, Zap, 
@@ -77,6 +78,7 @@ export default function KalkiDashboard() {
 
   useEffect(() => {
     setIsMounted(true);
+    recordUserVisit({ platform: 'Next.js 14 Web App' });
   }, []);
 
   // Simulate WebSocket event log ticker
@@ -96,15 +98,30 @@ export default function KalkiDashboard() {
     return () => clearInterval(interval);
   }, [wsStatus]);
 
-  // Handle Agent Dispatch Execution
+  // Handle Agent Dispatch Execution with Firebase Logging
   const handleExecuteTask = async () => {
     if (!inputQuery.trim()) return;
     setIsExecuting(true);
     setExecutionResult(null);
 
+    recordUserAction('dispatch_prompt_started', {
+      prompt: inputQuery,
+      model: selectedModel,
+      provider: selectedProvider
+    });
+
     // Dynamic real API call or local fallback orchestration simulation
     setTimeout(() => {
-      setExecutionResult({
+      const trace = [
+        { agent: "SecurityAgent", status: "PASSED", latency: "10ms" },
+        { agent: "PlannerAgent", status: "DECOMPOSED", latency: "25ms" },
+        { agent: "ResearchAgent", status: "RETRIEVED", latency: "80ms" },
+        { agent: "MemoryAgent", status: "INJECTED", latency: "15ms" },
+        { agent: "ExecutorAgent", status: "COMPLETED", latency: "95ms" },
+        { agent: "ValidatorAgent", status: "VERIFIED", latency: "20ms" }
+      ];
+
+      const resultObj = {
         trace_id: "tr-" + Math.random().toString(36).substring(2, 10),
         status: "SUCCESS",
         latency_ms: 245,
@@ -118,19 +135,24 @@ Query processed successfully: **"${inputQuery}"**
 - **ResearchAgent**: Queried Qdrant hybrid vector index (RRF Score: 0.942).
 - **ExecutorAgent**: Executed MCP tool \`kalki_vector_search\` using adapter model **${selectedModel}**.
 - **ValidatorAgent**: Factual consistency score is 0.99. Checked zero hallucinations.`,
-        execution_trace: [
-          { agent: "SecurityAgent", status: "PASSED", latency: "10ms" },
-          { agent: "PlannerAgent", status: "DECOMPOSED", latency: "25ms" },
-          { agent: "ResearchAgent", status: "RETRIEVED", latency: "80ms" },
-          { agent: "MemoryAgent", status: "INJECTED", latency: "15ms" },
-          { agent: "ExecutorAgent", status: "COMPLETED", latency: "95ms" },
-          { agent: "ValidatorAgent", status: "VERIFIED", latency: "20ms" }
-        ],
+        execution_trace: trace,
         citations: [
           { doc_id: "doc-001", title: "KALKI AI Architectural Manifesto", score: 0.942 }
         ]
-      });
+      };
+
+      setExecutionResult(resultObj);
       setIsExecuting(false);
+
+      // Persist full execution trace into Firebase Firestore
+      recordAgentExecution({
+        prompt: inputQuery,
+        model: selectedModel,
+        provider: selectedProvider,
+        status: "SUCCESS",
+        latencyMs: 245,
+        trace
+      });
     }, 1500);
   };
 
@@ -148,6 +170,13 @@ Query processed successfully: **"${inputQuery}"**
       }
     ]);
     setNewWorkflowName('');
+  };
+
+  // Tab switch with tracking
+  const handleTabSwitch = (tab: 'agent' | 'builder' | 'memory' | 'rag' | 'marketplace' | 'analytics' | 'security') => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false);
+    recordUserAction('switch_tab', { tab });
   };
 
   return (
@@ -242,7 +271,7 @@ Query processed successfully: **"${inputQuery}"**
       {/* 2. NAVIGATION BAR (Desktop Touch & Mobile Dropdown) */}
       <div className={`border-b border-white/10 bg-[#0B0F19]/50 px-4 sm:px-6 py-2 ${isMobileMenuOpen ? 'flex flex-col space-y-2' : 'hidden lg:flex lg:space-x-2 overflow-x-auto no-scrollbar'}`}>
         <button
-          onClick={() => { setActiveTab('agent'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('agent')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'agent'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -254,7 +283,7 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => { setActiveTab('builder'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('builder')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'builder'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -266,7 +295,7 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => { setActiveTab('memory'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('memory')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'memory'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -278,7 +307,7 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => { setActiveTab('rag'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('rag')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'rag'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -290,7 +319,7 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => { setActiveTab('marketplace'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('marketplace')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'marketplace'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -302,7 +331,7 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('analytics')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'analytics'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -314,7 +343,7 @@ Query processed successfully: **"${inputQuery}"**
         </button>
 
         <button
-          onClick={() => { setActiveTab('security'); setIsMobileMenuOpen(false); }}
+          onClick={() => handleTabSwitch('security')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all shrink-0 ${
             activeTab === 'security'
               ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40'
@@ -322,7 +351,7 @@ Query processed successfully: **"${inputQuery}"**
           }`}
         >
           <Shield className="w-4 h-4" />
-          <span>Security &amp; Guardrails</span>
+          <span>Security & Guardrails</span>
         </button>
       </div>
 
