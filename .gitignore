@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
-.env
 
 # Node & Next.js
 node_modules/
@@ -14,5 +13,5 @@ build/
 # IDE & OS
 .DS_Store
 Thumbs.db
-.vscode/
 .idea/
+config.bat
