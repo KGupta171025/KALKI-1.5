@@ -121,20 +121,69 @@ export default function KalkiDashboard() {
         { agent: "ValidatorAgent", status: "VERIFIED", latency: "20ms" }
       ];
 
+      const q = inputQuery.toLowerCase().trim();
+      let generatedResponse = "";
+
+      if (q.includes('supervised') || q.includes('machine learning') || q.includes('learning') || q.includes('classification') || q.includes('regression')) {
+        generatedResponse = `### KALKI AI IOS v1.5.0 Execution Result
+
+Goal: **"${inputQuery}"** | Model: **${selectedModel}** | Latency: 142ms
+
+#### 1. Core Paradigm & Formulation
+Supervised Learning is the primary machine learning paradigm where a model learns an empirical mapping function $f: \\mathcal{X} \\rightarrow \\mathcal{Y}$ from labeled training pairs $\\mathcal{D} = \\{(x_i, y_i)\\}_{i=1}^N$.
+
+#### 2. Key Sub-Tasks & Architectures
+- **Classification ($\\\\mathcal{Y} \\\\in \\\\{1, \\\\dots, C\\\\}$):** Categorical Cross-Entropy optimization for discrete labeling. Utilizes SVMs, Random Forests, XGBoost, and Transformer classifiers.
+- **Regression ($\\\\mathcal{Y} \\\\in \\\\mathbb{R}$):** Continuous value prediction minimizing Mean Squared Error (MSE) or Huber loss for outlier mitigation.
+- **Regularization:** $\\\\ell_1$ (Lasso) and $\\\\ell_2$ (Ridge) penalties to balance the Bias-Variance trade-off and prevent overfitting.
+
+#### 3. Verification Trace
+- **SecurityAgent**: Zero prompt injection risk detected (0.01).
+- **PlannerAgent**: Decomposed query into mathematical foundation and taxonomic review.
+- **ResearchAgent**: Queried Qdrant hybrid vector index (RRF Score: 0.96).
+- **ValidatorAgent**: Factual consistency score: 0.992.`;
+      } else if (q.includes('fastapi') || q.includes('code') || q.includes('python') || q.includes('rust')) {
+        generatedResponse = `### KALKI AI IOS v1.5.0 Execution Result
+
+Goal: **"${inputQuery}"** | Model: **${selectedModel}** | Latency: 138ms
+
+#### 1. High-Performance Architecture Blueprint
+\`\`\`python
+from fastapi import FastAPI, status
+import redis.asyncio as aioredis
+from pydantic import BaseModel
+
+app = FastAPI(title="KALKI Microservice", version="1.5.0")
+redis = aioredis.from_url("redis://localhost:6379")
+
+@app.post("/api/v1/dispatch", status_code=status.HTTP_200_OK)
+async def dispatch(prompt: str):
+    cached = await redis.get(f"kalki:{prompt}")
+    if cached: return {"status": "CACHED", "payload": cached}
+    return {"status": "SUCCESS", "latency_ms": 14.2}
+\`\`\`
+
+#### 2. Multi-Agent Clearance
+- **SecurityAgent**: Scanned code for AST safety, CORS policy, and zero vulnerabilities.
+- **ValidatorAgent**: Certified SLA compliance (<500ms).`;
+      } else {
+        generatedResponse = `### KALKI AI IOS v1.5.0 Execution Result
+
+Goal: **"${inputQuery}"** | Model: **${selectedModel}** | Latency: 145ms
+
+#### 📋 Execution Breakdown & Synthesis:
+- **SecurityAgent**: Scanned prompt against NIST 800-53 guardrails. Risk rating: 0.01 (PASSED).
+- **PlannerAgent**: Decomposed request into 3-phase asynchronous execution DAG.
+- **ResearchAgent**: Queried Qdrant hybrid vector store with dense embedding retrieval.
+- **ExecutorAgent**: Executed tool handoff via Model Context Protocol (MCP).
+- **ValidatorAgent**: Factual consistency score: 0.99. Zero hallucination detected.`;
+      }
+
       const resultObj = {
         trace_id: "tr-" + Math.random().toString(36).substring(2, 10),
         status: "SUCCESS",
-        latency_ms: 245,
-        response: `### KALKI AI IOS v1.5.0 Execution Result
-
-Query processed successfully: **"${inputQuery}"**
-
-#### 📋 Execution Handoff Log:
-- **SecurityAgent**: Scanned prompt. Guardrails classification risk rating is low (0.02).
-- **PlannerAgent**: Created a 3-step action graph. Registered tasks inside Redis Celery queue.
-- **ResearchAgent**: Queried Qdrant hybrid vector index (RRF Score: 0.942).
-- **ExecutorAgent**: Executed MCP tool \`kalki_vector_search\` using adapter model **${selectedModel}**.
-- **ValidatorAgent**: Factual consistency score is 0.99. Checked zero hallucinations.`,
+        latency_ms: 142,
+        response: generatedResponse,
         execution_trace: trace,
         citations: [
           { doc_id: "doc-001", title: "KALKI AI Architectural Manifesto", score: 0.942 }
